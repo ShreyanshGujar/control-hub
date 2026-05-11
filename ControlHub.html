@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Control Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f5f5f7;
+            --text: #1d1d1f;
+            --text2: #86868b;
+            --text3: #aeaeb2;
+            --card-bg: rgba(255,255,255,0.75);
+            --card-border: rgba(0,0,0,0.06);
+            --shadow: 0 2px 16px rgba(0,0,0,0.04);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.08);
+            --glow-habits: rgba(255,149,0,0.25);
+            --glow-study: rgba(175,82,222,0.25);
+            --glow-marvel: rgba(226,54,54,0.25);
+            --glow-jarvis: rgba(0,210,255,0.25);
+            --habits: #ff9500;
+            --study: #af52de;
+            --marvel: #e23636;
+            --jarvis: #00d2ff;
+        }
+        [data-theme="dark"] {
+            --bg: #0a0a0c;
+            --text: #f5f5f7;
+            --text2: #98989d;
+            --text3: #55555a;
+            --card-bg: rgba(22,22,24,0.78);
+            --card-border: rgba(255,255,255,0.07);
+            --shadow: 0 2px 16px rgba(0,0,0,0.3);
+            --shadow-lg: 0 12px 40px rgba(0,0,0,0.5);
+            --glow-habits: rgba(255,149,0,0.35);
+            --glow-study: rgba(175,82,222,0.35);
+            --glow-marvel: rgba(226,54,54,0.35);
+            --glow-jarvis: rgba(0,210,255,0.35);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body {
+            height: 100%; overflow: hidden;
+            background: var(--bg); color: var(--text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            font-size: 15px; transition: background 0.5s, color 0.5s;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        .bg-orbs { position: fixed; inset: 0; pointer-events: none; z-index: 0; }
+        .bg-orb {
+            position: absolute; border-radius: 50%; filter: blur(90px); opacity: 0.09;
+            animation: orbFloat 18s ease-in-out infinite;
+        }
+        .bg-orb:nth-child(1) { width: 350px; height: 350px; background: var(--habits); top: -80px; left: -80px; animation-delay: 0s; }
+        .bg-orb:nth-child(2) { width: 300px; height: 300px; background: var(--study); bottom: -60px; right: -60px; animation-delay: -6s; }
+        .bg-orb:nth-child(3) { width: 250px; height: 250px; background: var(--marvel); top: 45%; left: 55%; animation-delay: -12s; }
+        @keyframes orbFloat {
+            0%, 100% { transform: translate(0,0) scale(1); }
+            25% { transform: translate(30px,-20px) scale(1.08); }
+            50% { transform: translate(-15px,25px) scale(0.94); }
+            75% { transform: translate(25px,10px) scale(1.05); }
+        }
+
+        .container {
+            height: 100vh; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            padding: 20px; position: relative; z-index: 1;
+            gap: 6px;
+        }
+
+        /* Theme Toggle */
+        .theme-btn {
+            position: fixed; top: 20px; right: 20px; z-index: 100;
+            width: 42px; height: 42px; border-radius: 50%;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            cursor: pointer; font-size: 1.3rem; display: flex; align-items: center;
+            justify-content: center; transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            box-shadow: var(--shadow);
+        }
+        .theme-btn:hover { transform: scale(1.12); box-shadow: var(--shadow-lg); }
+        .theme-btn:active { transform: scale(0.85); }
+
+        /* Greeting */
+        .greeting {
+            font-size: 1.8rem; font-weight: 800; letter-spacing: -0.6px;
+            margin-bottom: 2px; text-align: center;
+            background: linear-gradient(135deg, var(--text) 0%, var(--text2) 100%);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .greeting-sub {
+            font-size: 0.72rem; color: var(--text3); font-weight: 500;
+            letter-spacing: 0.3px; margin-bottom: 24px; text-align: center;
+        }
+
+        /* Cards Grid */
+        .cards-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 14px; width: 100%; max-width: 520px;
+        }
+        @media (max-width: 480px) {
+            .cards-grid { gap: 10px; }
+            .greeting { font-size: 1.4rem; }
+        }
+
+        /* Tracker Card */
+        .tracker-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 22px; padding: 22px 18px;
+            cursor: pointer; text-decoration: none; color: inherit;
+            position: relative; overflow: visible;
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            transition: all 0.45s cubic-bezier(0.19, 1, 0.22, 1);
+            box-shadow: var(--shadow);
+            display: flex; flex-direction: column; gap: 8px;
+        }
+        .tracker-card::before {
+            content: ''; position: absolute; inset: -1px; border-radius: 22px;
+            opacity: 0; transition: opacity 0.45s;
+            z-index: -1;
+        }
+        .tracker-card.habits::before { box-shadow: 0 0 40px var(--glow-habits), 0 0 80px var(--glow-habits); }
+        .tracker-card.study::before { box-shadow: 0 0 40px var(--glow-study), 0 0 80px var(--glow-study); }
+        .tracker-card.marvel::before { box-shadow: 0 0 40px var(--glow-marvel), 0 0 80px var(--glow-marvel); }
+        .tracker-card.jarvis::before { box-shadow: 0 0 40px var(--glow-jarvis), 0 0 80px var(--glow-jarvis); }
+
+        .tracker-card:hover { transform: translateY(-6px) scale(1.03); }
+        .tracker-card:hover::before { opacity: 1; }
+        .tracker-card:active { transform: scale(0.94); transition: all 0.1s; }
+
+        .tracker-card.jarvis {
+            opacity: 0.45; cursor: not-allowed;
+        }
+        .tracker-card.jarvis:hover {
+            transform: none; 
+        }
+        .tracker-card.jarvis:hover::before { opacity: 0; }
+        .tracker-card.jarvis:active { transform: none; }
+
+        .card-icon {
+            width: 46px; height: 46px; border-radius: 13px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 1.4rem; transition: transform 0.45s cubic-bezier(0.19,1,0.22,1);
+            flex-shrink: 0;
+        }
+        .tracker-card:hover .card-icon { transform: scale(1.15) rotate(-5deg); }
+        .tracker-card.jarvis:hover .card-icon { transform: none; }
+        .icon-habits { background: rgba(255,149,0,0.12); }
+        .icon-study { background: rgba(175,82,222,0.12); }
+        .icon-marvel { background: rgba(226,54,54,0.12); }
+        .icon-jarvis { background: rgba(0,210,255,0.08); }
+
+        .card-label {
+            font-family: 'Inter', monospace; font-size: 0.58rem;
+            text-transform: uppercase; letter-spacing: 2px;
+            font-weight: 700;
+        }
+        .label-habits { color: var(--habits); }
+        .label-study { color: var(--study); }
+        .label-marvel { color: var(--marvel); }
+        .label-jarvis { color: var(--jarvis); opacity: 0.5; }
+
+        .card-name {
+            font-size: 1.1rem; font-weight: 800; letter-spacing: -0.4px;
+            line-height: 1.2;
+        }
+        .card-desc {
+            font-size: 0.68rem; color: var(--text2); font-weight: 500;
+            line-height: 1.4;
+        }
+        .card-arrow {
+            position: absolute; top: 18px; right: 18px;
+            font-size: 0.9rem; opacity: 0; transition: all 0.35s;
+            color: var(--text3);
+        }
+        .tracker-card:hover .card-arrow { opacity: 1; transform: translate(3px, -3px); }
+        .tracker-card.jarvis:hover .card-arrow { opacity: 0; }
+
+        .locked-badge {
+            position: absolute; bottom: 14px; right: 14px;
+            font-size: 0.55rem; font-weight: 700; letter-spacing: 1px;
+            padding: 3px 8px; border-radius: 4px;
+            background: rgba(255,255,255,0.04); color: var(--text3);
+            border: 1px solid var(--card-border);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(10px);
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 50px; padding: 10px 22px; font-size: 0.78rem;
+            font-weight: 600; z-index: 200; opacity: 0;
+            transition: all 0.35s cubic-bezier(0.34,1.56,0.64,1);
+            box-shadow: var(--shadow-lg); backdrop-filter: blur(40px);
+            pointer-events: none; white-space: nowrap;
+        }
+        .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+        @media (max-width: 380px) {
+            .cards-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .tracker-card { padding: 16px 12px; border-radius: 18px; }
+            .card-icon { width: 36px; height: 36px; border-radius: 10px; font-size: 1.1rem; }
+            .card-name { font-size: 0.9rem; }
+        }
+    </style>
+<!-- PWA Manifest -->
+<link rel="manifest" href="data:application/manifest+json,{
+  'name': 'Control Hub',
+  'short_name': 'Hub',
+  'start_url': '.',
+  'display': 'standalone',
+  'background_color': '#0a0a0c',
+  'theme_color': '#0a0a0c',
+  'icons': []
+}">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Control Hub">
+<meta name="mobile-web-app-capable" content="yes">
+</head>
+<body data-theme="dark">
+
+<div class="bg-orbs">
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+    <div class="bg-orb"></div>
+</div>
+
+<div class="container">
+    <!-- Theme Toggle -->
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
+
+    <!-- Greeting -->
+    <div class="greeting" id="greeting">Good Evening</div>
+    <div class="greeting-sub">Your productivity ecosystem</div>
+
+    <!-- Cards -->
+    <div class="cards-grid">
+        <!-- Habit Tracker -->
+        <a href="New Tracker.html" class="tracker-card habits" onclick="playSound('click')">
+            <span class="card-arrow">↗</span>
+            <div class="card-icon icon-habits">🔥</div>
+            <div class="card-label label-habits">MODULE 01</div>
+            <div class="card-name">Habit Tracker</div>
+            <div class="card-desc">Daily routines, streaks & XP</div>
+        </a>
+
+        <!-- Study Tracker -->
+        <a href="StudyTracker.html" class="tracker-card study" onclick="playSound('click')">
+            <span class="card-arrow">↗</span>
+            <div class="card-icon icon-study">📚</div>
+            <div class="card-label label-study">MODULE 02</div>
+            <div class="card-name">JEE Study Pro</div>
+            <div class="card-desc">Pomodoro, mocks & analytics</div>
+        </a>
+
+        <!-- Marvel Tracker -->
+        <a href="MarvelTracker.html" class="tracker-card marvel" onclick="playSound('click')">
+            <span class="card-arrow">↗</span>
+            <div class="card-icon icon-marvel">🦸</div>
+            <div class="card-label label-marvel">MODULE 03</div>
+            <div class="card-name">Marvel Archive</div>
+            <div class="card-desc">MCU timeline & watchlist</div>
+        </a>
+
+        <!-- Jarvis AI -->
+        <div class="tracker-card jarvis" onclick="playSound('click');showToast('🔒 Jarvis AI — Coming Soon')">
+            <span class="card-arrow">↗</span>
+            <div class="card-icon icon-jarvis">🤖</div>
+            <div class="card-label label-jarvis">MODULE 04</div>
+            <div class="card-name">Jarvis AI</div>
+            <div class="card-desc">Intelligent assistant</div>
+            <div class="locked-badge">🔒 SOON</div>
+        </div>
+    </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<audio id="snd-click" src="click.mp3" preload="auto"></audio>
+<audio id="snd-hover" src="hover.mp3" preload="auto"></audio>
+
+<!-- BACK BUTTON SCRIPT FOR ALL TRACKERS -->
+<script>
+// This script adds a back button to all tracker pages when opened
+(function() {
+    // Only run if NOT on the control hub page
+    if (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
+        // This is the hub - don't add back button
+    }
+})();
+</script>
+
+<script>
+'use strict';
+
+let toastTimer = null;
+
+function playSound(name) {
+    const s = document.getElementById('snd-' + name);
+    if (s) { s.currentTime = 0; s.play().catch(() => {}); }
+}
+
+function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.classList.add('show');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.remove('show'), 2000);
+}
+
+function toggleTheme() {
+    const body = document.body;
+    const isDark = body.getAttribute('data-theme') === 'dark';
+    body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    document.getElementById('themeBtn').textContent = isDark ? '☀️' : '🌙';
+    localStorage.setItem('hubTheme', isDark ? 'light' : 'dark');
+    playSound('click');
+}
+
+// Time-based greeting
+function updateGreeting() {
+    const hour = new Date().getHours();
+    let greeting = 'Good Evening 🌙';
+    if (hour >= 5 && hour < 12) greeting = 'Good Morning ☀️';
+    else if (hour >= 12 && hour < 17) greeting = 'Good Afternoon 🌤️';
+    else if (hour >= 17 && hour < 21) greeting = 'Good Evening 🌆';
+    document.getElementById('greeting').textContent = greeting;
+}
+
+// Init
+(function() {
+    const saved = localStorage.getItem('hubTheme');
+    if (saved === 'light') {
+        document.body.setAttribute('data-theme', 'light');
+        document.getElementById('themeBtn').textContent = '☀️';
+    }
+    updateGreeting();
+    setInterval(updateGreeting, 60000); // Update every minute
+})();
+
+// Hover sounds
+document.querySelectorAll('.tracker-card').forEach(card => {
+    card.addEventListener('mouseenter', () => playSound('hover'));
+});
+</script>
+</body>
+</html>
