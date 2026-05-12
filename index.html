@@ -41,7 +41,7 @@
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         html, body {
-            height: 100%; overflow: hidden;
+            height: 100%; overflow-y: auto; overflow-x: hidden;
             background: var(--bg); color: var(--text);
             font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
             font-size: 15px; transition: background 0.5s, color 0.5s;
@@ -64,13 +64,10 @@
         }
 
         .container {
-            height: 100vh; display: flex; flex-direction: column;
-            align-items: center; justify-content: center;
-            padding: 20px; position: relative; z-index: 1;
-            gap: 6px;
+            min-height: 100vh; display: flex; flex-direction: column;
+            align-items: center; padding: 20px; position: relative; z-index: 1;
         }
 
-        /* Theme Toggle */
         .theme-btn {
             position: fixed; top: 20px; right: 20px; z-index: 100;
             width: 42px; height: 42px; border-radius: 50%;
@@ -83,29 +80,49 @@
         .theme-btn:hover { transform: scale(1.12); box-shadow: var(--shadow-lg); }
         .theme-btn:active { transform: scale(0.85); }
 
-        /* Greeting */
         .greeting {
             font-size: 1.8rem; font-weight: 800; letter-spacing: -0.6px;
-            margin-bottom: 2px; text-align: center;
+            margin-top: 40px; margin-bottom: 4px; text-align: center;
             background: linear-gradient(135deg, var(--text) 0%, var(--text2) 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
         }
         .greeting-sub {
             font-size: 0.72rem; color: var(--text3); font-weight: 500;
-            letter-spacing: 0.3px; margin-bottom: 24px; text-align: center;
+            letter-spacing: 0.3px; margin-bottom: 16px; text-align: center;
         }
 
-        /* Cards Grid */
+        /* Widget Row */
+        .widget-row {
+            display: flex; gap: 12px; width: 100%; max-width: 520px;
+            margin-bottom: 16px; flex-wrap: wrap;
+        }
+        .widget {
+            flex: 1; min-width: 140px;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 18px; padding: 14px 16px;
+            backdrop-filter: blur(40px); -webkit-backdrop-filter: blur(40px);
+            box-shadow: var(--shadow); transition: all 0.3s;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .widget:hover { box-shadow: var(--shadow-lg); transform: translateY(-2px); }
+        .widget-icon { font-size: 1.6rem; flex-shrink: 0; }
+        .widget-info { flex: 1; min-width: 0; }
+        .widget-title { font-size: 0.65rem; color: var(--text3); text-transform: uppercase; letter-spacing: 0.8px; font-weight: 600; }
+        .widget-value { font-size: 0.9rem; font-weight: 700; }
+        .widget-sub { font-size: 0.65rem; color: var(--text2); margin-top: 2px; }
+
         .cards-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
             gap: 14px; width: 100%; max-width: 520px;
+            margin-bottom: 24px;
         }
         @media (max-width: 480px) {
             .cards-grid { gap: 10px; }
-            .greeting { font-size: 1.4rem; }
+            .greeting { font-size: 1.4rem; margin-top: 30px; }
+            .widget-row { gap: 8px; }
+            .widget { padding: 10px 12px; }
         }
 
-        /* Tracker Card */
         .tracker-card {
             background: var(--card-bg);
             border: 1px solid var(--card-border);
@@ -131,12 +148,8 @@
         .tracker-card:hover::before { opacity: 1; }
         .tracker-card:active { transform: scale(0.94); transition: all 0.1s; }
 
-        .tracker-card.jarvis {
-            opacity: 0.45; cursor: not-allowed;
-        }
-        .tracker-card.jarvis:hover {
-            transform: none; 
-        }
+        .tracker-card.jarvis { opacity: 0.45; cursor: not-allowed; }
+        .tracker-card.jarvis:hover { transform: none; }
         .tracker-card.jarvis:hover::before { opacity: 0; }
         .tracker-card.jarvis:active { transform: none; }
 
@@ -163,14 +176,8 @@
         .label-marvel { color: var(--marvel); }
         .label-jarvis { color: var(--jarvis); opacity: 0.5; }
 
-        .card-name {
-            font-size: 1.1rem; font-weight: 800; letter-spacing: -0.4px;
-            line-height: 1.2;
-        }
-        .card-desc {
-            font-size: 0.68rem; color: var(--text2); font-weight: 500;
-            line-height: 1.4;
-        }
+        .card-name { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.4px; line-height: 1.2; }
+        .card-desc { font-size: 0.68rem; color: var(--text2); font-weight: 500; line-height: 1.4; }
         .card-arrow {
             position: absolute; top: 18px; right: 18px;
             font-size: 0.9rem; opacity: 0; transition: all 0.35s;
@@ -187,7 +194,6 @@
             border: 1px solid var(--card-border);
         }
 
-        /* Toast */
         .toast {
             position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(10px);
             background: var(--card-bg); border: 1px solid var(--card-border);
@@ -206,20 +212,6 @@
             .card-name { font-size: 0.9rem; }
         }
     </style>
-<!-- PWA Manifest -->
-<link rel="manifest" href="data:application/manifest+json,{
-  'name': 'Control Hub',
-  'short_name': 'Hub',
-  'start_url': '.',
-  'display': 'standalone',
-  'background_color': '#0a0a0c',
-  'theme_color': '#0a0a0c',
-  'icons': []
-}">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Control Hub">
-<meta name="mobile-web-app-capable" content="yes">
 </head>
 <body data-theme="dark">
 
@@ -230,16 +222,35 @@
 </div>
 
 <div class="container">
-    <!-- Theme Toggle -->
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
 
-    <!-- Greeting -->
     <div class="greeting" id="greeting">Good Evening</div>
     <div class="greeting-sub">Your productivity ecosystem</div>
 
-    <!-- Cards -->
+    <!-- Widget Row: Quote + Weather -->
+    <div class="widget-row">
+        <!-- Daily Quote Widget -->
+        <div class="widget" id="quoteWidget">
+            <div class="widget-icon">💬</div>
+            <div class="widget-info">
+                <div class="widget-title">Daily Quote</div>
+                <div class="widget-value" id="quoteText">Loading...</div>
+                <div class="widget-sub" id="quoteAuthor"></div>
+            </div>
+        </div>
+
+        <!-- Weather Widget -->
+        <div class="widget" id="weatherWidget">
+            <div class="widget-icon" id="weatherIcon">🌤️</div>
+            <div class="widget-info">
+                <div class="widget-title">Weather</div>
+                <div class="widget-value" id="weatherTemp">--°C</div>
+                <div class="widget-sub" id="weatherCity">Loading...</div>
+            </div>
+        </div>
+    </div>
+
     <div class="cards-grid">
-        <!-- Habit Tracker -->
         <a href="New Tracker.html" class="tracker-card habits" onclick="playSound('click')">
             <span class="card-arrow">↗</span>
             <div class="card-icon icon-habits">🔥</div>
@@ -248,7 +259,6 @@
             <div class="card-desc">Daily routines, streaks & XP</div>
         </a>
 
-        <!-- Study Tracker -->
         <a href="StudyTracker.html" class="tracker-card study" onclick="playSound('click')">
             <span class="card-arrow">↗</span>
             <div class="card-icon icon-study">📚</div>
@@ -257,7 +267,6 @@
             <div class="card-desc">Pomodoro, mocks & analytics</div>
         </a>
 
-        <!-- Marvel Tracker -->
         <a href="MarvelTracker.html" class="tracker-card marvel" onclick="playSound('click')">
             <span class="card-arrow">↗</span>
             <div class="card-icon icon-marvel">🦸</div>
@@ -266,7 +275,6 @@
             <div class="card-desc">MCU timeline & watchlist</div>
         </a>
 
-        <!-- Jarvis AI -->
         <div class="tracker-card jarvis" onclick="playSound('click');showToast('🔒 Jarvis AI — Coming Soon')">
             <span class="card-arrow">↗</span>
             <div class="card-icon icon-jarvis">🤖</div>
@@ -282,17 +290,6 @@
 
 <audio id="snd-click" src="click.mp3" preload="auto"></audio>
 <audio id="snd-hover" src="hover.mp3" preload="auto"></audio>
-
-<!-- BACK BUTTON SCRIPT FOR ALL TRACKERS -->
-<script>
-// This script adds a back button to all tracker pages when opened
-(function() {
-    // Only run if NOT on the control hub page
-    if (window.location.pathname.includes('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/')) {
-        // This is the hub - don't add back button
-    }
-})();
-</script>
 
 <script>
 'use strict';
@@ -323,11 +320,134 @@ function toggleTheme() {
 // Time-based greeting
 function updateGreeting() {
     const hour = new Date().getHours();
-    let greeting = 'Good Evening 🌙';
+    let greeting = 'Good Night 🌙';
     if (hour >= 5 && hour < 12) greeting = 'Good Morning ☀️';
     else if (hour >= 12 && hour < 17) greeting = 'Good Afternoon 🌤️';
     else if (hour >= 17 && hour < 21) greeting = 'Good Evening 🌆';
     document.getElementById('greeting').textContent = greeting;
+}
+
+// ==================== DAILY QUOTE ====================
+const quotes = [
+    { text: "The only way to do great work is to love what you do.", author: "Steve Jobs" },
+    { text: "Success is not final, failure is not fatal: it is the courage to continue that counts.", author: "Winston Churchill" },
+    { text: "Believe you can and you're halfway there.", author: "Theodore Roosevelt" },
+    { text: "Your future is created by what you do today, not tomorrow.", author: "Robert Kiyosaki" },
+    { text: "Don't watch the clock; do what it does. Keep going.", author: "Sam Levenson" },
+    { text: "The secret of getting ahead is getting started.", author: "Mark Twain" },
+    { text: "It does not matter how slowly you go as long as you do not stop.", author: "Confucius" },
+    { text: "Quality is not an act, it is a habit.", author: "Aristotle" },
+    { text: "Strive for progress, not perfection.", author: "Unknown" },
+    { text: "The pain you feel today will be the strength you feel tomorrow.", author: "Unknown" },
+    { text: "Dreams don't work unless you do.", author: "John C. Maxwell" },
+    { text: "Wake up with determination. Go to bed with satisfaction.", author: "Unknown" },
+    { text: "Small daily improvements over time lead to stunning results.", author: "Robin Sharma" },
+    { text: "AIR < 100 requires sacrifice. No excuses.", author: "JEE Motto" },
+    { text: "Study while others are sleeping. Succeed while others are wishing.", author: "Unknown" },
+    { text: "Your competition is studying right now.", author: "Unknown" },
+    { text: "IIT isn't luck. It's math. Put in the hours.", author: "Unknown" },
+    { text: "Discipline > Motivation. Every single time.", author: "Unknown" },
+    { text: "One day, all this hard work will pay off.", author: "Unknown" },
+    { text: "Push yourself, because no one else is going to do it for you.", author: "Unknown" }
+];
+
+function setDailyQuote() {
+    const today = new Date().toISOString().slice(0, 10);
+    const saved = localStorage.getItem('dailyQuote');
+    let quoteData;
+    
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed.date === today) {
+            quoteData = parsed;
+        }
+    }
+    
+    if (!quoteData || quoteData.date !== today) {
+        const randomIndex = Math.floor(Math.random() * quotes.length);
+        quoteData = { date: today, index: randomIndex };
+        localStorage.setItem('dailyQuote', JSON.stringify(quoteData));
+    }
+    
+    const quote = quotes[quoteData.index];
+    document.getElementById('quoteText').textContent = '"' + quote.text + '"';
+    document.getElementById('quoteAuthor').textContent = '— ' + quote.author;
+}
+setDailyQuote();
+
+// ==================== WEATHER ====================
+function getWeather() {
+    const saved = localStorage.getItem('weatherData');
+    const now = Date.now();
+    
+    // Use cached weather if less than 30 minutes old
+    if (saved) {
+        const parsed = JSON.parse(saved);
+        if (now - parsed.timestamp < 30 * 60 * 1000) {
+            displayWeather(parsed);
+            return;
+        }
+    }
+    
+    // Try to get user's location
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                fetchWeather(pos.coords.latitude, pos.coords.longitude);
+            },
+            () => {
+                // If location denied, use Chennai as default for India
+                fetchWeather(13.0827, 80.2707);
+            }
+        );
+    } else {
+        // Default: Chennai, India (approximate center of India)
+        fetchWeather(20.5937, 78.9629);
+    }
+}
+
+async function fetchWeather(lat, lon) {
+    try {
+        // Free Open-Meteo API — no API key needed!
+        const res = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${lon}&current_weather=true&timezone=auto`);
+        const data = await res.json();
+        
+        if (data && data.current_weather) {
+            const weather = {
+                temp: Math.round(data.current_weather.temperature),
+                code: data.current_weather.weathercode,
+                timestamp: Date.now()
+            };
+            localStorage.setItem('weatherData', JSON.stringify(weather));
+            displayWeather(weather);
+        }
+    } catch (e) {
+        document.getElementById('weatherTemp').textContent = '--°C';
+        document.getElementById('weatherCity').textContent = 'Unavailable';
+    }
+}
+
+function displayWeather(weather) {
+    const temp = weather.temp;
+    const code = weather.code;
+    
+    let icon = '🌤️';
+    let desc = 'Clear';
+    
+    // WMO Weather codes
+    if (code === 0) { icon = '☀️'; desc = 'Clear'; }
+    else if (code <= 3) { icon = '🌤️'; desc = 'Partly Cloudy'; }
+    else if (code <= 48) { icon = '🌥️'; desc = 'Cloudy'; }
+    else if (code <= 57) { icon = '🌧️'; desc = 'Drizzle'; }
+    else if (code <= 67) { icon = '🌧️'; desc = 'Rain'; }
+    else if (code <= 77) { icon = '❄️'; desc = 'Snow'; }
+    else if (code <= 82) { icon = '🌧️'; desc = 'Showers'; }
+    else if (code <= 86) { icon = '❄️'; desc = 'Snow Showers'; }
+    else if (code >= 95) { icon = '⛈️'; desc = 'Thunderstorm'; }
+    
+    document.getElementById('weatherIcon').textContent = icon;
+    document.getElementById('weatherTemp').textContent = temp + '°C';
+    document.getElementById('weatherCity').textContent = desc;
 }
 
 // Init
@@ -338,111 +458,14 @@ function updateGreeting() {
         document.getElementById('themeBtn').textContent = '☀️';
     }
     updateGreeting();
-    setInterval(updateGreeting, 60000); // Update every minute
+    setInterval(updateGreeting, 60000);
+    getWeather();
+    setInterval(getWeather, 30 * 60 * 1000); // Refresh every 30 min
 })();
 
-// Hover sounds
 document.querySelectorAll('.tracker-card').forEach(card => {
     card.addEventListener('mouseenter', () => playSound('hover'));
 });
-</script>
-    <!-- SYNC BUTTONS -->
-<style>
-.sync-buttons {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 8px; z-index: 300;
-}
-.sync-btn {
-    padding: 10px 18px; border-radius: 50px;
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    color: var(--text); cursor: pointer; font-size: 0.73rem; font-weight: 600;
-    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-    box-shadow: var(--shadow); transition: all 0.3s;
-    font-family: inherit; white-space: nowrap;
-}
-.sync-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-.sync-btn:active { transform: scale(0.9); }
-.sync-btn.export { background: #007aff; color: #fff; border: none; }
-</style>
-
-<div class="sync-buttons">
-    <button class="sync-btn export" onclick="syncExport()">📤 Export All Data</button>
-    <button class="sync-btn" onclick="syncImport()">📥 Import Data</button>
-</div>
-
-<script>
-function syncExport() {
-    const allData = {};
-    for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        allData[key] = localStorage.getItem(key);
-    }
-    const jsonStr = JSON.stringify(allData, null, 2);
-    
-    // Try Web Share API first (mobile)
-    if (navigator.share) {
-        const blob = new Blob([jsonStr], { type: 'application/json' });
-        const file = new File([blob], 'hub_backup_' + new Date().toISOString().slice(0, 10) + '.json', { type: 'application/json' });
-        navigator.share({
-            files: [file],
-            title: 'Control Hub Backup',
-            text: 'Import this on your other device'
-        }).catch(() => downloadBackup(jsonStr));
-    } else {
-        downloadBackup(jsonStr);
-    }
-}
-
-function downloadBackup(jsonStr) {
-    const blob = new Blob([jsonStr], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'hub_backup_' + new Date().toISOString().slice(0, 10) + '.json';
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('📤 File downloaded! Send to other device.');
-}
-
-function syncImport() {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = function(e) {
-        const file = e.target.files[0];
-        if (!file) return;
-        const reader = new FileReader();
-        reader.onload = function(ev) {
-            try {
-                const data = JSON.parse(ev.target.result);
-                let count = 0;
-                for (const key in data) {
-                    localStorage.setItem(key, data[key]);
-                    count++;
-                }
-                showToast('✅ ' + count + ' items synced! Refreshing...');
-                setTimeout(() => location.reload(), 800);
-            } catch (err) {
-                showToast('❌ Invalid file!');
-            }
-        };
-        reader.readAsText(file);
-    };
-    input.click();
-}
-
-function showToast(msg) {
-    const existing = document.querySelector('.sync-toast');
-    if (existing) existing.remove();
-    const t = document.createElement('div');
-    t.className = 'sync-toast';
-    t.textContent = msg;
-    t.style.cssText = 'position:fixed;bottom:100px;left:50%;transform:translateX(-50%);background:var(--card-bg);border:1px solid var(--card-border);border-radius:50px;padding:12px 24px;font-size:0.8rem;font-weight:600;z-index:999;backdrop-filter:blur(30px);-webkit-backdrop-filter:blur(30px);box-shadow:var(--shadow-lg);white-space:nowrap;';
-    document.body.appendChild(t);
-    setTimeout(() => t.remove(), 2500);
-}
 </script>
 </body>
 </html>
