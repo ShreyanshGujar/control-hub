@@ -208,6 +208,16 @@
             .card-icon { width: 36px; height: 36px; border-radius: 10px; font-size: 1.1rem; }
             .card-name { font-size: 0.9rem; }
         }
+
+        @media (max-width: 480px) {
+    .cards-grid { gap: 10px; }
+    .tracker-card { padding: 16px 12px; border-radius: 18px; }
+    .card-icon { width: 36px; height: 36px; border-radius: 10px; font-size: 1.1rem; }
+    .card-name { font-size: 0.9rem; }
+    .greeting { font-size: 1.4rem; }
+    .sync-buttons { bottom: 16px; gap: 6px; }
+    .sync-btn { padding: 8px 14px; font-size: 0.68rem; }
+}
     </style>
 </head>
 <body data-theme="dark">
@@ -260,6 +270,14 @@
             <div class="card-name">Marvel Archive</div>
             <div class="card-desc">MCU timeline & watchlist</div>
         </a>
+
+        <a href="ExpenseTracker.html" class="tracker-card" style="border-color: rgba(52,199,89,0.15);">
+    <span class="card-arrow">↗</span>
+    <div class="card-icon" style="background:rgba(52,199,89,0.12);">💸</div>
+    <div class="card-label" style="color:#34c759;">MODULE 05</div>
+    <div class="card-name">Pocket Money</div>
+    <div class="card-desc">Track allowance & savings</div>
+</a>
 
         <div class="tracker-card jarvis" onclick="playSound('click');showToast('🔒 Jarvis AI — Coming Soon')">
             <span class="card-arrow">↗</span>
@@ -387,6 +405,87 @@ function displayWeather(w) {
 document.querySelectorAll('.tracker-card').forEach(c => {
     card.addEventListener('mouseenter', () => playSound('hover'));
 });
+</script>
+    <!-- SYNC BUTTONS -->
+<style>
+.sync-buttons {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    display: flex; gap: 8px; z-index: 300;
+}
+.sync-btn {
+    padding: 10px 18px; border-radius: 50px;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    color: var(--text); cursor: pointer; font-size: 0.73rem; font-weight: 600;
+    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+    box-shadow: var(--shadow); transition: all 0.3s;
+    font-family: inherit; white-space: nowrap;
+}
+.sync-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.sync-btn:active { transform: scale(0.9); }
+.sync-btn.export { background: #007aff; color: #fff; border: none; }
+</style>
+
+<div class="sync-buttons">
+    <button class="sync-btn export" onclick="syncExport()">📤 Export All Data</button>
+    <button class="sync-btn" onclick="syncImport()">📥 Import Data</button>
+</div>
+
+<script>
+function syncExport() {
+    const allData = {};
+    for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        allData[key] = localStorage.getItem(key);
+    }
+    const jsonStr = JSON.stringify(allData, null, 2);
+    if (navigator.share) {
+        const blob = new Blob([jsonStr], { type: 'application/json' });
+        const file = new File([blob], 'hub_backup_' + new Date().toISOString().slice(0, 10) + '.json', { type: 'application/json' });
+        navigator.share({ files: [file], title: 'Control Hub Backup', text: 'Import this on your other device' }).catch(() => downloadBackup(jsonStr));
+    } else {
+        downloadBackup(jsonStr);
+    }
+}
+
+function downloadBackup(jsonStr) {
+    const blob = new Blob([jsonStr], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'hub_backup_' + new Date().toISOString().slice(0, 10) + '.json';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('📤 File downloaded! Send to other device.');
+}
+
+function syncImport() {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = function(e) {
+        const file = e.target.files[0];
+        if (!file) return;
+        const reader = new FileReader();
+        reader.onload = function(ev) {
+            try {
+                const data = JSON.parse(ev.target.result);
+                let count = 0;
+                for (const key in data) {
+                    localStorage.setItem(key, data[key]);
+                    count++;
+                }
+                showToast('✅ ' + count + ' items synced! Refreshing...');
+                setTimeout(() => location.reload(), 800);
+            } catch (err) {
+                showToast('❌ Invalid file!');
+            }
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
 </script>
 </body>
 </html>
