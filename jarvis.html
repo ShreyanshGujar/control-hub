@@ -309,51 +309,65 @@ setInterval(() => {
     }
 }, 30000);
 </script>
-    <script>
-// Auto-sync to JARVIS (Fixed for your actual localStorage keys)
+<script>
+// Better JARVIS Sync - reads ALL data properly
 setInterval(() => {
     try {
-        // Get main tracker data
         const jeeData = JSON.parse(localStorage.getItem('jeeUltimate_v4') || '{}');
-        const xp = localStorage.getItem('userXP') || '0';
+        const xp = parseInt(localStorage.getItem('userXP') || '0');
+        
+        // Count done tasks
+        const physicsTasks = jeeData.tasks?.physics || [];
+        const chemTasks = jeeData.tasks?.chemistry || [];
+        const mathTasks = jeeData.tasks?.math || [];
+        
+        const physicsDone = physicsTasks.filter(t => t.done).length;
+        const chemDone = chemTasks.filter(t => t.done).length;
+        const mathDone = mathTasks.filter(t => t.done).length;
+        const totalDone = physicsDone + chemDone + mathDone;
+        const totalTasks = physicsTasks.length + chemTasks.length + mathTasks.length;
         
         const data = {
             habits: {
-                physics_revision: jeeData.tasks?.physics?.length > 0,
-                chemistry_revision: jeeData.tasks?.chemistry?.length > 0,
-                math_revision: jeeData.tasks?.math?.length > 0,
-                mock_test: jeeData.mockTests?.length > 0,
-                pomodoro: jeeData.pomoCount > 0
+                physics: physicsDone,
+                chemistry: chemDone,
+                math: mathDone,
+                total_completed: totalDone,
+                total_tasks: totalTasks
             },
             study: {
-                totalHours: jeeData.pomoCount ? jeeData.pomoCount * 0.5 : 0,
-                subjects: {
-                    physics: jeeData.tasks?.physics?.filter(t => t.done).length || 0,
-                    chemistry: jeeData.tasks?.chemistry?.filter(t => t.done).length || 0,
-                    math: jeeData.tasks?.math?.filter(t => t.done).length || 0
-                },
+                totalHours: (jeeData.pomoCount || 0) * 0.5,
                 pomodoro_count: jeeData.pomoCount || 0,
                 streak: jeeData.streak || 0,
                 level: jeeData.level || 1,
-                xp: parseInt(xp)
+                xp: xp,
+                subjects: {
+                    physics: physicsDone,
+                    chemistry: chemDone,
+                    math: mathDone
+                }
             },
-            expenses: [], // Add if you have expense tracker
-            marvel: []    // Add if you have marvel tracker
+            expenses: [],
+            marvel: []
         };
         
-        console.log('Syncing to JARVIS:', data);
+        console.log('📊 Syncing to JARVIS:', 
+            `Pomos: ${data.study.pomodoro_count}`, 
+            `Streak: ${data.study.streak}`, 
+            `Tasks: ${data.habits.total_completed}/${data.habits.total_tasks}`
+        );
         
         fetch('http://localhost:8765/sync', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(data)
-        }).then(r => r.json()).then(d => console.log('JARVIS:', d))
-          .catch(() => {}); // JARVIS not running
+        }).then(r => r.json()).then(d => console.log('✅', d.message || d.status))
+          .catch(() => console.log('⚠️ JARVIS server not running'));
         
     } catch(e) {
         console.log('Sync error:', e);
     }
-}, 10000); // Every 10 seconds
+}, 10000);
 </script>
 </body>
 </html>
