@@ -309,5 +309,51 @@ setInterval(() => {
     }
 }, 30000);
 </script>
+    <script>
+// Auto-sync to JARVIS (Fixed for your actual localStorage keys)
+setInterval(() => {
+    try {
+        // Get main tracker data
+        const jeeData = JSON.parse(localStorage.getItem('jeeUltimate_v4') || '{}');
+        const xp = localStorage.getItem('userXP') || '0';
+        
+        const data = {
+            habits: {
+                physics_revision: jeeData.tasks?.physics?.length > 0,
+                chemistry_revision: jeeData.tasks?.chemistry?.length > 0,
+                math_revision: jeeData.tasks?.math?.length > 0,
+                mock_test: jeeData.mockTests?.length > 0,
+                pomodoro: jeeData.pomoCount > 0
+            },
+            study: {
+                totalHours: jeeData.pomoCount ? jeeData.pomoCount * 0.5 : 0,
+                subjects: {
+                    physics: jeeData.tasks?.physics?.filter(t => t.done).length || 0,
+                    chemistry: jeeData.tasks?.chemistry?.filter(t => t.done).length || 0,
+                    math: jeeData.tasks?.math?.filter(t => t.done).length || 0
+                },
+                pomodoro_count: jeeData.pomoCount || 0,
+                streak: jeeData.streak || 0,
+                level: jeeData.level || 1,
+                xp: parseInt(xp)
+            },
+            expenses: [], // Add if you have expense tracker
+            marvel: []    // Add if you have marvel tracker
+        };
+        
+        console.log('Syncing to JARVIS:', data);
+        
+        fetch('http://localhost:8765/sync', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        }).then(r => r.json()).then(d => console.log('JARVIS:', d))
+          .catch(() => {}); // JARVIS not running
+        
+    } catch(e) {
+        console.log('Sync error:', e);
+    }
+}, 10000); // Every 10 seconds
+</script>
 </body>
 </html>
