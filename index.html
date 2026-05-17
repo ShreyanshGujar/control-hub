@@ -19,6 +19,7 @@
             --glow-study: rgba(175,82,222,0.25);
             --glow-marvel: rgba(226,54,54,0.25);
             --glow-jarvis: rgba(0,210,255,0.25);
+            --glow-expense: rgba(52,199,89,0.25);
             --habits: #ff9500;
             --study: #af52de;
             --marvel: #e23636;
@@ -37,6 +38,7 @@
             --glow-study: rgba(175,82,222,0.35);
             --glow-marvel: rgba(226,54,54,0.35);
             --glow-jarvis: rgba(0,210,255,0.35);
+            --glow-expense: rgba(52,199,89,0.35);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -82,7 +84,6 @@
         .theme-btn:hover { transform: scale(1.12); box-shadow: var(--shadow-lg); }
         .theme-btn:active { transform: scale(0.85); }
 
-        /* Weather Badge */
         .weather-badge {
             position: fixed; top: 22px; left: 20px; z-index: 100;
             background: var(--card-bg); border: 1px solid var(--card-border);
@@ -103,7 +104,6 @@
             letter-spacing: 0.3px; text-align: center;
         }
 
-        /* Quote - one line */
         .daily-quote {
             font-size: 0.78rem; color: var(--text2); font-weight: 500;
             text-align: center; margin-bottom: 28px; max-width: 460px;
@@ -113,11 +113,6 @@
         .cards-grid {
             display: grid; grid-template-columns: repeat(2, 1fr);
             gap: 14px; width: 100%; max-width: 520px;
-        }
-        @media (max-width: 480px) {
-            .cards-grid { gap: 10px; }
-            .greeting { font-size: 1.4rem; }
-            .weather-badge { top: 10px; left: 10px; padding: 6px 10px; font-size: 0.7rem; }
         }
 
         .tracker-card {
@@ -140,6 +135,7 @@
         .tracker-card.study::before { box-shadow: 0 0 40px var(--glow-study), 0 0 80px var(--glow-study); }
         .tracker-card.marvel::before { box-shadow: 0 0 40px var(--glow-marvel), 0 0 80px var(--glow-marvel); }
         .tracker-card.jarvis::before { box-shadow: 0 0 40px var(--glow-jarvis), 0 0 80px var(--glow-jarvis); }
+        .tracker-card.expense::before { box-shadow: 0 0 40px var(--glow-expense), 0 0 80px var(--glow-expense); }
 
         .tracker-card:hover { transform: translateY(-6px) scale(1.03); }
         .tracker-card:hover::before { opacity: 1; }
@@ -162,6 +158,7 @@
         .icon-study { background: rgba(175,82,222,0.12); }
         .icon-marvel { background: rgba(226,54,54,0.12); }
         .icon-jarvis { background: rgba(0,210,255,0.08); }
+        .icon-expense { background: rgba(52,199,89,0.12); }
 
         .card-label {
             font-family: 'Inter', monospace; font-size: 0.58rem;
@@ -172,6 +169,7 @@
         .label-study { color: var(--study); }
         .label-marvel { color: var(--marvel); }
         .label-jarvis { color: var(--jarvis); opacity: 0.5; }
+        .label-expense { color: #34c759; }
 
         .card-name { font-size: 1.1rem; font-weight: 800; letter-spacing: -0.4px; line-height: 1.2; }
         .card-desc { font-size: 0.68rem; color: var(--text2); font-weight: 500; line-height: 1.4; }
@@ -202,22 +200,39 @@
         }
         .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
 
+        .sync-buttons {
+            position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+            display: flex; gap: 8px; z-index: 300;
+        }
+        .sync-btn {
+            padding: 10px 18px; border-radius: 50px;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            color: var(--text); cursor: pointer; font-size: 0.73rem; font-weight: 600;
+            backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
+            box-shadow: var(--shadow); transition: all 0.3s;
+            font-family: inherit; white-space: nowrap;
+        }
+        .sync-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+        .sync-btn:active { transform: scale(0.9); }
+        .sync-btn.export { background: #007aff; color: #fff; border: none; }
+
+        @media (max-width: 480px) {
+            .cards-grid { gap: 10px; }
+            .tracker-card { padding: 16px 12px; border-radius: 18px; }
+            .card-icon { width: 36px; height: 36px; border-radius: 10px; font-size: 1.1rem; }
+            .card-name { font-size: 0.9rem; }
+            .greeting { font-size: 1.4rem; }
+            .weather-badge { top: 10px; left: 10px; padding: 6px 10px; font-size: 0.7rem; }
+            .sync-buttons { bottom: 16px; gap: 6px; }
+            .sync-btn { padding: 8px 14px; font-size: 0.68rem; }
+        }
+
         @media (max-width: 380px) {
             .cards-grid { grid-template-columns: 1fr 1fr; gap: 8px; }
             .tracker-card { padding: 16px 12px; border-radius: 18px; }
             .card-icon { width: 36px; height: 36px; border-radius: 10px; font-size: 1.1rem; }
             .card-name { font-size: 0.9rem; }
         }
-
-        @media (max-width: 480px) {
-    .cards-grid { gap: 10px; }
-    .tracker-card { padding: 16px 12px; border-radius: 18px; }
-    .card-icon { width: 36px; height: 36px; border-radius: 10px; font-size: 1.1rem; }
-    .card-name { font-size: 0.9rem; }
-    .greeting { font-size: 1.4rem; }
-    .sync-buttons { bottom: 16px; gap: 6px; }
-    .sync-btn { padding: 8px 14px; font-size: 0.68rem; }
-}
     </style>
 </head>
 <body data-theme="dark">
@@ -229,23 +244,18 @@
 </div>
 
 <div class="container">
-    <!-- Theme Toggle -->
     <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">🌙</button>
 
-    <!-- Weather Badge -->
     <div class="weather-badge">
         <span class="weather-badge-icon" id="weatherIcon">🌤️</span>
         <span id="weatherTemp">--°C</span>
     </div>
 
-    <!-- Greeting -->
     <div class="greeting" id="greeting">Good Evening</div>
     <div class="greeting-sub">Your productivity ecosystem</div>
 
-    <!-- Daily Quote - One Line -->
     <div class="daily-quote" id="dailyQuote">"Discipline > Motivation. Every single time."</div>
 
-    <!-- Cards -->
     <div class="cards-grid">
         <a href="New Tracker.html" class="tracker-card habits" onclick="playSound('click')">
             <span class="card-arrow">↗</span>
@@ -271,13 +281,13 @@
             <div class="card-desc">MCU timeline & watchlist</div>
         </a>
 
-        <a href="ExpenseTracker.html" class="tracker-card" style="border-color: rgba(52,199,89,0.15);">
-    <span class="card-arrow">↗</span>
-    <div class="card-icon" style="background:rgba(52,199,89,0.12);">💸</div>
-    <div class="card-label" style="color:#34c759;">MODULE 05</div>
-    <div class="card-name">Pocket Money</div>
-    <div class="card-desc">Track allowance & savings</div>
-</a>
+        <a href="ExpenseTracker.html" class="tracker-card expense" onclick="playSound('click')">
+            <span class="card-arrow">↗</span>
+            <div class="card-icon icon-expense">💸</div>
+            <div class="card-label label-expense">MODULE 05</div>
+            <div class="card-name">Expense Tracker</div>
+            <div class="card-desc">Track allowance & savings</div>
+        </a>
 
         <div class="tracker-card jarvis" onclick="playSound('click');showToast('🔒 Jarvis AI — Coming Soon')">
             <span class="card-arrow">↗</span>
@@ -291,6 +301,11 @@
 </div>
 
 <div class="toast" id="toast"></div>
+
+<div class="sync-buttons">
+    <button class="sync-btn export" onclick="syncExport()">📤 Export All Data</button>
+    <button class="sync-btn" onclick="syncImport()">📥 Import Data</button>
+</div>
 
 <audio id="snd-click" src="click.mp3" preload="auto"></audio>
 <audio id="snd-hover" src="hover.mp3" preload="auto"></audio>
@@ -330,7 +345,6 @@ function updateGreeting() {
     document.getElementById('greeting').textContent = g;
 }
 
-// Daily Quote
 const quotes = [
     '"Discipline > Motivation. Every single time."',
     '"Small daily improvements = stunning results."',
@@ -359,7 +373,6 @@ function setDailyQuote() {
     document.getElementById('dailyQuote').textContent = quotes[index];
 }
 
-// Weather
 function getWeather() {
     const saved = localStorage.getItem('weatherData');
     const now = Date.now();
@@ -393,44 +406,6 @@ function displayWeather(w) {
     document.getElementById('weatherTemp').textContent = w.temp + '°C';
 }
 
-// Init
-(function() {
-    const s = localStorage.getItem('hubTheme');
-    if (s === 'light') { document.body.setAttribute('data-theme', 'light'); document.getElementById('themeBtn').textContent = '☀️'; }
-    updateGreeting(); setInterval(updateGreeting, 60000);
-    setDailyQuote();
-    getWeather(); setInterval(getWeather, 30 * 60 * 1000);
-})();
-
-document.querySelectorAll('.tracker-card').forEach(c => {
-    card.addEventListener('mouseenter', () => playSound('hover'));
-});
-</script>
-    <!-- SYNC BUTTONS -->
-<style>
-.sync-buttons {
-    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
-    display: flex; gap: 8px; z-index: 300;
-}
-.sync-btn {
-    padding: 10px 18px; border-radius: 50px;
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    color: var(--text); cursor: pointer; font-size: 0.73rem; font-weight: 600;
-    backdrop-filter: blur(30px); -webkit-backdrop-filter: blur(30px);
-    box-shadow: var(--shadow); transition: all 0.3s;
-    font-family: inherit; white-space: nowrap;
-}
-.sync-btn:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
-.sync-btn:active { transform: scale(0.9); }
-.sync-btn.export { background: #007aff; color: #fff; border: none; }
-</style>
-
-<div class="sync-buttons">
-    <button class="sync-btn export" onclick="syncExport()">📤 Export All Data</button>
-    <button class="sync-btn" onclick="syncImport()">📥 Import Data</button>
-</div>
-
-<script>
 function syncExport() {
     const allData = {};
     for (let i = 0; i < localStorage.length; i++) {
@@ -486,6 +461,18 @@ function syncImport() {
     };
     input.click();
 }
+
+(function() {
+    const s = localStorage.getItem('hubTheme');
+    if (s === 'light') { document.body.setAttribute('data-theme', 'light'); document.getElementById('themeBtn').textContent = '☀️'; }
+    updateGreeting(); setInterval(updateGreeting, 60000);
+    setDailyQuote();
+    getWeather(); setInterval(getWeather, 30 * 60 * 1000);
+})();
+
+document.querySelectorAll('.tracker-card').forEach(card => {
+    card.addEventListener('mouseenter', () => playSound('hover'));
+});
 </script>
 </body>
 </html>
