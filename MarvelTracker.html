@@ -399,5 +399,24 @@
 .back-to-hub:active { transform: translateX(-50%) scale(0.9); }
 </style>
 <a href="https://shreyanshgujar.github.io/control-hub/" class="back-to-hub">← Back to Hub</a>
+    <script>
+// Auto-sync to JARVIS
+setInterval(() => {
+    const data = {
+        habits: JSON.parse(localStorage.getItem('habits') || '{}'),
+        study: JSON.parse(localStorage.getItem('study') || '{}'),
+        expenses: JSON.parse(localStorage.getItem('expenses') || '[]'),
+        marvel: JSON.parse(localStorage.getItem('marvel') || '[]')
+    };
+    
+    try {
+        fetch('http://localhost:8765/sync', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(data)
+        });
+    } catch(e) {}
+}, 10000); // Every 10 seconds
+</script>
 </body>
 </html>
